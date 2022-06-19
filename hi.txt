@@ -22,3 +22,95 @@ users:posts#45
 Use routes as keys:
 pagecache#/about
 pagecache#/auth/signin
+
+
+Reducing Design to Queries
+Sql:
+1. Put the ideas in tables
+2. Figure out how we will query it
+Redis:
+1. Figure out what queries are needed
+2. Structure the data to best answer those queries
+
+
+Queries needed queries for each page:
+/
+1. items sorted by price
+2. items sorted by ending time
+3. items sorted by views
+4. search items by name
+
+/auth/signin
+1. Find a user by name
+2. Create session
+3. Find session
+4. Get user with a given id
+
+/auth/signup
+1. Create user
+
+/dashboard/item/new
+1. Create an item
+
+/item/<id>
+1. Find an item with a given id
+2. Find a # of likes tied to an item
+3. Like an item
+4. Unlike an item
+5. See if current user likes an item
+6. Create a bid tied to an item
+7. Find a bid history of an item
+8. Find items similar to an existing item
+9. increment the number of views for an item
+
+/user/<id>
+1. Find item a user likes
+2. Find items two different users both like
+
+/user/<id>
+1. Find item a user likes
+2. Find items two different users both like
+
+/dashboard/item
+1. Find items creates by user, sorted by various criteria
+
+reads:
+- Find an item with a given id
+- Find a # of likes tied to an item
+- See if current user likes an item
+- Find a bid history of an item
+- Find items similar to an existing item
+- Find a user by name
+- Find session
+- Get user with a given id
+- items sorted by price
+- items sorted by ending time
+- items sorted by views
+- search items by name
+- Find item a user likes
+- Find items two different users both like
+- Find items creates by user, sorted by various criteria
+
+
+writes:
+- Like an item
+- Unlike an item
+- Create a bid tied to an item
+- increment the number of views for an item
+- Create session
+- Create user
+- Create an item
+
+
+Resources in the app:
+users
+sessions
+items
+bids
+views
+likes
+
+Which should be stored as hashes?
+users
+sessions
+items
