@@ -11,5 +11,14 @@ Custom pages:
 Static pages: (Cache and automatically expire these pages)
 1. Contact
 2. Abouts us
-3. Sig In
-4. Sig Up
+3. Sign In
+4. Sign Up
+
+
+Naming strategy:
+users:45
+users:posts#45
+
+Use routes as keys:
+pagecache#/about
+pagecache#/auth/signin
