@@ -11,11 +11,18 @@ export const getSession = async (id: string) => {
 }
 
 export const saveSession = async (session: Session) => {
+    const { id } = session
+    return await client.hSet(id, serialize(session))
+}
 
+const serialize = (session: Session) => {
+    const { userId, username } = session
+
+    return { userId, username }
 }
 
 const deserialize = (id: string, session: {[key: string]: string}) => {
     const { userId, username } = session
 
-    return { userId, username }
+    return { id, userId, username }
 }
