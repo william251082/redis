@@ -19,15 +19,13 @@ export const createUser = async (attrs: CreateUserAttrs) => {
 }
 
 const serialize = (user: CreateUserAttrs) => {
-    return {
-        username: user.username,
-        password: user.password
-    }
+    const { username, password } = user
+
+    return { username, password }
 }
 
 const deserialize = (id: string, user: {[key: string]: string}) => {
-    const {username} = user
-    const {password} = user
+    const { username, password } = user
 
-    return {id, username, password}
+    return { id, username, password }
 }
