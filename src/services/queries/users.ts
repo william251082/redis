@@ -7,7 +7,9 @@ export const getUserByUsername = async (username: string) => {};
 
 export const getUserById = async (id: string) => {
     const user = await client.hGetAll(usersKey(id))
-
+    if (Object.keys(user).length === 0) {
+        return null
+    }
     return deserialize(id, user)
 }
 
