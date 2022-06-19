@@ -114,3 +114,13 @@ Which should be stored as hashes?
 users
 sessions
 items
+
+serialize
+- get an object ready to go to redis hash
+- removes id
+- turns date into a queryable format
+
+deserialize
+- Formats data coming out of redis
+- add id
+- Parse string numbers into plain numbers
