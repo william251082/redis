@@ -1,0 +1,15 @@
+https://app.redislabs.com/#/
+https://rbook.cloud/sheets/b7036ba6ba84225a
+https://redis.io/commands/
+stephen discord  https://discord.gg/vvcyvjDkdC
+
+1. Fetch 1 to 3 props of a single item
+GETRANGE item:1 0 0
+2. Update 1 to 3 props of a single item
+SETRANGE item:1 0 bcd
+3. Fetch all props related to several items
+MGET item:1 item:2 item:3
+4. Create several items
+MSET item:4 item:5 item:nzg
+
+

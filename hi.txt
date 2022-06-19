@@ -1,0 +1,15 @@
+First Task: Implement a caching layer
+
+Custom pages:
+1. Landing
+2. Dashboard
+3. Auction Creation
+4. Auction Show
+5. Auction Search
+6. Auction User profile
+
+Static pages: (Cache and automatically expire these pages)
+1. Contact
+2. Abouts us
+3. Sig In
+4. Sig Up
