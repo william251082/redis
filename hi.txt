@@ -124,3 +124,10 @@ deserialize
 - Formats data coming out of redis
 - add id
 - Parse string numbers into plain numbers
+
+use SSCAN instead of SMEMBERS, it's more optimized
+use cases of SET:
+- enforcing uniqueness of any value
+- creating relationship between records
+- finding common attributes between different things
+- general list of elements where order doesn't matter

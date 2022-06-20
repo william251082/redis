@@ -4,7 +4,6 @@ import {serialize} from "$services/queries/items/serialize";
 import {client} from "$services/redis";
 import {itemsKey} from "$services/keys";
 import {deserialize} from "$services/queries/items/deserialize";
-import {destroy_each} from "svelte/internal";
 
 export const getItem = async (id: string) => {
     const item = await client.hGetAll(itemsKey(id))
