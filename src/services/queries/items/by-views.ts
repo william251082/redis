@@ -1,16 +1,35 @@
 import {client} from "$services/redis";
 import {itemsByViewsKey, itemsKey} from "$services/keys";
+import {deserialize} from "$services/queries/items/deserialize";
 
 export const itemsByViews = async (order: 'DESC' | 'ASC' = 'DESC', offset = 0, count = 10) => {
-    const results = await client.sort(
+    let results = await client.sort(
         itemsByViewsKey(), {
             GET: [
                 '#',
                 `${itemsKey('*')}->name`,
-                `${itemsKey('*')}->views`
+                `${itemsKey('*')}->views`,
+                `${itemsKey('*')}->endingAt`,
+                `${itemsKey('*')}->imageUrl`,
+                `${itemsKey('*')}->price`
             ],
-            BY: 'score' // disable sorting
+            BY: 'nosort',
+            DIRECTION: order,
+            LIMIT: {
+                offset,
+                count
+            }
         }
     )
-    console.log(results)
+    const items = []
+    if (typeof results !== 'number') {
+        while (results.length) {
+            const [id, name, views, endingAt, imageUrl, price, ...rest] = results
+            const item = deserialize(id, { name, views, endingAt, imageUrl, price })
+            items.push(item)
+            results = rest
+        }
+    }
+
+    return items
 }
