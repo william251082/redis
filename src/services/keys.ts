@@ -7,3 +7,4 @@ export const usernamesKey = () => 'usernames'
 
 export const itemsKey = (itemId:string) => `items#${itemId}`
 export const itemsByViewsKey = () => 'items:views'
+export const itemsEndingAtKey = () => 'items:endingAt'

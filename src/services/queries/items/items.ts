@@ -2,7 +2,7 @@ import type { CreateItemAttrs } from '$services/types';
 import {genId} from "$services/utils";
 import {serialize} from "$services/queries/items/serialize";
 import {client} from "$services/redis";
-import {itemsByViewsKey, itemsKey} from "$services/keys";
+import {itemsByViewsKey, itemsEndingAtKey, itemsKey} from "$services/keys";
 import {deserialize} from "$services/queries/items/deserialize";
 
 export const getItem = async (id: string) => {
@@ -31,12 +31,17 @@ export const getItems = async (ids: string[]) => {
 export const createItem = async (attrs: CreateItemAttrs) => {
     const id = genId()
     const serialized = serialize(attrs)
+    const {endingAt} = attrs
 
     await Promise.all([
         await client.hSet(itemsKey(id), serialized),
         await client.zAdd(itemsByViewsKey(), {
             value: id,
             score: 0
+        }),
+        await client.zAdd(itemsEndingAtKey(), {
+            value: id,
+            score: endingAt.toMillis()
         })
     ])
 
