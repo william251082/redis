@@ -18,7 +18,6 @@ const run = async () => {
         return client.hGetAll(`car#${id}`)
     })
     const results = await Promise.all(commands)
-    console.log(results)
     // const car = await client.hGetAll('car')
     // if (Object.keys(car).length === 0) {
     //     console.log('Car not found, respond 404')

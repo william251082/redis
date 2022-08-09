@@ -10,7 +10,7 @@ export const signup = async (username: string, password: string) => {
 	});
 };
 
-export const signin = async (username: string, password: string): Promise<string> => {
+export const signin = async (username: string, password: string): Promise<unknown> => {
 	const user = await getUserByUsername(username);
 
 	if (!user) {

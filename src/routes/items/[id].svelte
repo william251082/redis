@@ -88,7 +88,7 @@
 				<hr />
 
 				<div class="flex justify-between">
-					<Stat label="High Bid" value={'$' + item.price.toFixed(2)} />
+					<Stat label="High Bid" value={'$' + (item.price !== null ? item.price : 0).toFixed(2)} />
 					<Stat bg="bg-amber-500" label="# Bids" value={item.bids} />
 					<Stat
 						bg="bg-violet-500"
@@ -109,7 +109,7 @@
 							bind:value={amount}
 							id="amount"
 							class="rounded-lgborder-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-							placeholder={`$${(item.price + 0.01).toFixed(2)} minimum`}
+							placeholder={`$${(item.price !== null ? item.price : 0).toFixed(2)} minimum`}
 						/>
 
 						{#if err}

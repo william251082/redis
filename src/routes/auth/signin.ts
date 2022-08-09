@@ -6,7 +6,9 @@ export const post: RequestHandler = async ({ request, locals }) => {
 
 	const userId = await signin(username, password);
 
-	locals.session.userId = userId;
+	if (typeof userId === "string") {
+		locals.session.userId = userId;
+	}
 	locals.session.username = username;
 
 	return {

@@ -28,7 +28,7 @@ export const getItems = async (ids: string[]) => {
     })
 };
 
-export const createItem = async (attrs: CreateItemAttrs, userId: string) => {
+export const createItem = async (attrs: CreateItemAttrs) => {
     const id = genId()
     const serialized = serialize(attrs)
     await client.hSet(itemsKey(id), serialized)
