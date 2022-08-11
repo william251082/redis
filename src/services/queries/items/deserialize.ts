@@ -1,26 +1,19 @@
 import type { Item } from '$services/types';
 import { DateTime } from 'luxon';
 
-export const deserialize = (itemId: string, item: { [key: string]: string }): Item => {
-    const { id, name, ownerId, imageUrl, description, highestBidUserId } = item
-    const createdAt = DateTime.fromMillis(parseInt(item.createdAt))
-    const endingAt = DateTime.fromMillis(parseInt(item.endingAt))
-    const views = parseInt(item.views)
-    const likes = parseInt(item.likes)
-    const price = parseInt(item.price)
-    const bids = parseInt(item.bids)
-    return {
-        id,
-        name,
-        ownerId,
-        imageUrl,
-        description,
-        createdAt,
-        endingAt,
-        views,
-        likes,
-        price,
-        bids,
-        highestBidUserId
-    }
-}
+export const deserialize = (id: string, item: { [key: string]: string }): Item => {
+	return {
+		id,
+		name: item.name,
+		description: item.description,
+		imageUrl: item.imageUrl,
+		highestBidUserId: item.highestBidUserId,
+		ownerId: item.ownerId,
+		createdAt: DateTime.fromMillis(parseInt(item.createdAt)),
+		endingAt: DateTime.fromMillis(parseInt(item.endingAt)),
+		views: parseInt(item.views),
+		likes: parseInt(item.likes),
+		bids: parseInt(item.bids),
+		price: parseFloat(item.price)
+	};
+};

@@ -1,29 +1,32 @@
 import type { Session } from '$services/types';
-import {client} from "$services/redis";
-import {sessionsKey} from "$services/keys";
+import { sessionsKey } from '$services/keys';
+import { client } from '$services/redis';
 
 export const getSession = async (id: string) => {
-    const session = await client.hGetAll(sessionsKey(id))
-    if (Object.keys(session).length === 0) {
-        return null
-    }
-    return deserialize(id, session)
-}
+	const session = await client.hGetAll(sessionsKey(id));
+
+	if (Object.keys(session).length === 0) {
+		return null;
+	}
+
+	return deserialize(id, session);
+};
 
 export const saveSession = async (session: Session) => {
-    const { id } = session
+	return client.hSet(sessionsKey(session.id), serialize(session));
+};
 
-    return await client.hSet(sessionsKey(id), serialize(session))
-}
+const deserialize = (id: string, session: { [key: string]: string }) => {
+	return {
+		id,
+		userId: session.userId,
+		username: session.username
+	};
+};
 
 const serialize = (session: Session) => {
-    const { userId, username } = session
-
-    return { userId, username }
-}
-
-const deserialize = (id: string, session: {[key: string]: string}) => {
-    const { userId, username } = session
-
-    return { id, userId, username }
-}
+	return {
+		userId: session.userId,
+		username: session.username
+	};
+};

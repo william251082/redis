@@ -112,10 +112,10 @@
 	<div>
 		Filter By Status
 		<select
-				value={sort.tag}
-				on:change={onSelectChange}
-				id="duration"
-				class="border py-2 pr-4 pl-2 shadow-sm border-gray-300 rounded"
+			value={sort.tag}
+			on:change={onSelectChange}
+			id="duration"
+			class="border py-2 pr-4 pl-2 shadow-sm border-gray-300 rounded"
 		>
 			<option value={''}>Show All</option>
 			<option value={'active'}>Show Active</option>

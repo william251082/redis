@@ -3,8 +3,7 @@ interface QueryOpts {
 	perPage: number;
 	sortBy: string;
 	direction: string;
+	tag: string;
 }
 
-export const itemsByUser = async (userId: string, opts: QueryOpts) => {
-	return {items: '', totalPages: 0}
-};
+export const itemsByUser = async (userId: string, opts: QueryOpts) => {};

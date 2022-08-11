@@ -1,7 +1,7 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import {
-	// itemsByBids,
-	// itemsByLikes,
+	itemsByBids,
+	itemsByLikes,
 	itemsByPrice,
 	itemsByViews,
 	itemsByEndingTime
