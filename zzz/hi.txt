@@ -131,3 +131,15 @@ use cases of SET:
 - creating relationship between records
 - finding common attributes between different things
 - general list of elements where order doesn't matter
+
+concurrency issue on bids
+click the bid button in fast succession
+for (let i: i < 15; i++) {
+    $0.click()
+}
+
+options for handling concurrency
+1. use atomic update command (like HINCRBY or HSETNX)
+2. use a transaction with the WATCH command
+3. use a lock
+4. use a custom LUA update script

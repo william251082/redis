@@ -18,7 +18,8 @@ export const createBid = async (attrs: CreateBidAttrs) => {
 	}
 	const serialized = serializeHistory(amount, createdAt.toMillis())
 
-	await Promise.all([
+	// find a fix for this concurrency bug
+	return await Promise.all([
 		client.rPush(bidHistoryKey(itemId), serialized),
 		client.hSet(itemsKey(item.id), {
 			bids: item.bids + 1,
@@ -26,7 +27,6 @@ export const createBid = async (attrs: CreateBidAttrs) => {
 			highestBidUserId: userId
 		})
 	])
-	return
 };
 
 export const getBidHistory = async (itemId: string, offset = 0, count = 10): Promise<Bid[]> => {
