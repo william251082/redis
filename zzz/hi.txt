@@ -134,9 +134,7 @@ use cases of SET:
 
 concurrency issue on bids
 click the bid button in fast succession
-for (let i: i < 15; i++) {
-    $0.click()
-}
+for (let i = 0; i < 15; i++) { $0.click() }
 
 options for handling concurrency
 1. use atomic update command (like HINCRBY or HSETNX)

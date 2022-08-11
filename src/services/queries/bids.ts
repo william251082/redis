@@ -5,28 +5,32 @@ import { DateTime } from 'luxon';
 import {getItem} from "$services/queries/items";
 
 export const createBid = async (attrs: CreateBidAttrs) => {
-	const { itemId, userId, amount, createdAt } = attrs
-	const item = await getItem(itemId)
-	if (!item) {
-		throw new Error('Item does not exist')
-	}
-	if (item.price >= amount) {
-		throw new Error('Bid too low')
-	}
-	if (item.endingAt.diff(DateTime.now()).toMillis() < 0) {
-		throw new Error('item closed to bidding')
-	}
-	const serialized = serializeHistory(amount, createdAt.toMillis())
+	return client.executeIsolated(async (isolatedClient) => {
+		const { itemId, userId, amount, createdAt } = attrs
+		await isolatedClient.watch(itemsKey(itemId))
 
-	// find a fix for this concurrency bug
-	return await Promise.all([
-		client.rPush(bidHistoryKey(itemId), serialized),
-		client.hSet(itemsKey(item.id), {
-			bids: item.bids + 1,
-			price: amount,
-			highestBidUserId: userId
-		})
-	])
+		const item = await getItem(itemId)
+		if (!item) {
+			throw new Error('Item does not exist')
+		}
+		if (item.price >= amount) {
+			throw new Error('Bid too low')
+		}
+		if (item.endingAt.diff(DateTime.now()).toMillis() < 0) {
+			throw new Error('item closed to bidding')
+		}
+		const serialized = serializeHistory(amount, createdAt.toMillis())
+
+		return isolatedClient
+			.multi()
+			.rPush(bidHistoryKey(itemId), serialized)
+			.hSet(itemsKey(item.id), {
+				bids: item.bids + 1,
+				price: amount,
+				highestBidUserId: userId
+			})
+			.exec()
+	})
 };
 
 export const getBidHistory = async (itemId: string, offset = 0, count = 10): Promise<Bid[]> => {
