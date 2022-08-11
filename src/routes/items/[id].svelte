@@ -8,9 +8,9 @@
 	import Card from '$lib/components/card.svelte';
 	import Stat from '$lib/components/stat.svelte';
 
-	export let item: any = null;
+	export let item: Item | null = null;
 	export let userLikes: boolean = false;
-	export let history: { createdAt: string; amount: number }[] = [];
+	export let history: { createdAt: number; amount: number }[] = [];
 	export let similarItems: Item[] = [];
 	export let userHasHighBid = false;
 
@@ -20,10 +20,14 @@
 	let message = '';
 
 	$: err = amount && '';
+	if (item.createdAt === 'Nan') {
+
+	}
+
 	$: endingAt =
-		typeof item.endingAt === 'object'
-			? item.endingAt.toRelative().replace('in ', '')
-			: DateTime.fromMillis(item.endingAt).toRelative().replace('in ', '');
+			typeof item.endingAt === 'object'
+					? item.endingAt.toRelative().replace('in ', '')
+					: DateTime.fromMillis(item.endingAt).toRelative().replace('in ', '');
 
 	async function onClickLike() {
 		if (!$session.userId) {
@@ -57,8 +61,9 @@
 		}
 
 		[{ item, userLikes, history, similarItems, userHasHighBid }] = await get(
-			`/items/${$page.params.id}`
+				`/items/${$page.params.id}`
 		);
+
 		amount = '';
 		loading = false;
 		message = 'Success! You have the winning bid';
@@ -78,8 +83,8 @@
 					<LikeButton numLikes={item.likes} {userLikes} on:click={onClickLike} />
 				</div>
 				<a
-					href={`/users/${item.ownerId}`}
-					class="inline-block self-start text-indigo-600 hover:text-indigo-900">See the seller</a
+						href={`/users/${item.ownerId}`}
+						class="inline-block self-start text-indigo-600 hover:text-indigo-900">See the seller</a
 				>
 				<p>
 					{item.description}
@@ -88,13 +93,9 @@
 				<hr />
 
 				<div class="flex justify-between">
-					<Stat label="High Bid" value={'$' + (item.price !== null ? item.price : 0).toFixed(2)} />
+					<Stat label="High Bid" value={'$' + item.price.toFixed(2)} />
 					<Stat bg="bg-amber-500" label="# Bids" value={item.bids} />
-					<Stat
-						bg="bg-violet-500"
-						label="Ending In"
-						value={endingAt}
-					/>
+					<Stat bg="bg-violet-500" label="Ending In" value={endingAt} />
 				</div>
 
 				{#if userHasHighBid}
@@ -106,10 +107,10 @@
 						<div class="text-lg">Place a Bid</div>
 
 						<input
-							bind:value={amount}
-							id="amount"
-							class="rounded-lgborder-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-							placeholder={`$${(item.price !== null ? item.price : 0).toFixed(2)} minimum`}
+								bind:value={amount}
+								id="amount"
+								class="rounded-lgborder-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+								placeholder={`$${(item.price + 0.01).toFixed(2)} minimum`}
 						/>
 
 						{#if err}
@@ -125,9 +126,9 @@
 						{/if}
 
 						<button
-							class:bg-gray-300={loading}
-							class:disabled={loading}
-							class="py-2 px-4 bg-indigo-600 focus:ring-indigo-500 focus:ring-offset-indigo-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg "
+								class:bg-gray-300={loading}
+								class:disabled={loading}
+								class="py-2 px-4 bg-indigo-600 focus:ring-indigo-500 focus:ring-offset-indigo-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg "
 						>
 							Place Bid
 						</button>

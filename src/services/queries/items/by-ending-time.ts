@@ -1,5 +1,5 @@
 import {client} from "$services/redis";
-import {itemsEndingAtKey, itemsKey} from "$services/keys";
+import {itemsByEndingAtKey, itemsKey} from "$services/keys";
 import {deserialize} from "$services/queries/items/deserialize";
 
 export const itemsByEndingTime = async (
@@ -7,7 +7,7 @@ export const itemsByEndingTime = async (
 	offset = 0,
 	count = 10
 ) => {
-	const ids = await client.zRange(itemsEndingAtKey(), Date.now(), '+inf', {
+	const ids = await client.zRange(itemsByEndingAtKey(), Date.now(), '+inf', {
 			BY: 'SCORE',
 			LIMIT: { offset, count }
 		}

@@ -70,6 +70,13 @@
 		{ label: '# Views', field: 'views', sortable: true },
 		{ label: '# Likes', field: 'likes', sortable: true },
 		{
+			label: 'Status',
+			component: ItemBadge,
+			props: (item: ItemSummary) => {
+				return { item };
+			}
+		},
+		{
 			label: 'Link',
 			component: Link,
 			props: (item: ItemSummary) => {
@@ -102,20 +109,20 @@
 
 <div class="flex justify-between">
 	<div class="text-3xl mb-4">Your Items</div>
-	<!-- <div>
+	<div>
 		Filter By Status
 		<select
-			value={sort.tag}
-			on:change={onSelectChange}
-			id="duration"
-			class="border py-2 pr-4 pl-2 shadow-sm border-gray-300 rounded"
+				value={sort.tag}
+				on:change={onSelectChange}
+				id="duration"
+				class="border py-2 pr-4 pl-2 shadow-sm border-gray-300 rounded"
 		>
 			<option value={''}>Show All</option>
 			<option value={'active'}>Show Active</option>
 			<option value={'unsold'}>Show Unsold</option>
 			<option value={'sold'}>Show Sold</option>
 		</select>
-	</div> -->
+	</div>
 </div>
 
 {#if err}
