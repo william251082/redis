@@ -1,5 +1,5 @@
 import type { CreateBidAttrs, Bid } from '$services/types';
-import {bidHistoryKey, itemsKey, userLikesKey} from '$services/keys';
+import {bidHistoryKey, itemsByPriceKey, itemsKey, userLikesKey} from '$services/keys';
 import { client } from '$services/redis';
 import { DateTime } from 'luxon';
 import {getItem} from "$services/queries/items";
@@ -28,6 +28,10 @@ export const createBid = async (attrs: CreateBidAttrs) => {
 				bids: item.bids + 1,
 				price: amount,
 				highestBidUserId: userId
+			})
+			.zAdd(itemsByPriceKey(), {
+				value: item.id,
+				score: amount
 			})
 			.exec()
 	})
