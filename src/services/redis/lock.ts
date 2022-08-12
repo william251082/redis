@@ -1,9 +1,11 @@
 import {randomBytes} from "crypto";
 import {client} from "$services/redis/client";
+import type {Client} from "../../../worker/client";
 
-export const withLock = async (key: string, cb: (signal: any) => any) => {
+export const withLock = async (key: string, cb: (redisClient: Client, signal: any) => any) => {
 	// Initialize a few variables to control retry behavior
 	const retryDelayMs = 100
+	const timeoutMs = 2000
 	let retries = 20
 
 	// Generate a random value to store at the lock key
@@ -29,8 +31,10 @@ export const withLock = async (key: string, cb: (signal: any) => any) => {
 			const signal = { expired: false }
 			setTimeout (() => {
 				signal.expired = true
-			}, 2000)
-			return await cb(signal)
+			}, timeoutMs)
+			const proxiedClient = buildClientProxy(timeoutMs)
+
+			return await cb(proxiedClient, signal)
 		} finally {
 			// UNSET the locked set
 			await client.unlock(lockKey, token)
@@ -38,6 +42,27 @@ export const withLock = async (key: string, cb: (signal: any) => any) => {
 	}
 }
 
-const buildClientProxy = () => {};
+const buildClientProxy = (timeoutMs: number) => {
+	const startTime = Date.now()
+
+	const handler = {
+		get(target: Client, prop: keyof Client) {
+			if (Date.now() >= startTime + timeoutMs) {
+				throw new Error('Lock has expired')
+			}
+			const value = target[prop]
+
+			return typeof value === 'function' ? value.bind(target) : value
+		}
+	}
+
+	return new Proxy(client, handler) as Client
+}
+
+const pause = (duration: number) => {
+	return new Promise((resolve) => {
+		setTimeout(resolve, duration)
+	})
+}
 
 

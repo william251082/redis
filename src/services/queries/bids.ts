@@ -13,11 +13,13 @@ const pause = (duration: number) => {
 export const createBid = async (attrs: CreateBidAttrs) => {
 	const { itemId, userId, amount, createdAt } = attrs
 
-	return withLock(itemId, async (signal: any) => {
+	return withLock(itemId, async (lockedClient: typeof client, signal: any) => {
 		// 1) Fetch the item
 		// 2) Do validation
 		// 3) Writing some data
 		const item = await getItem(itemId)
+
+		// await pause(5000)
 
 		if (!item) {
 			throw new Error('Item does not exist')
@@ -35,13 +37,13 @@ export const createBid = async (attrs: CreateBidAttrs) => {
 		}
 
 		return Promise.all([
-			client.rPush(bidHistoryKey(itemId), serialized),
-			client.hSet(itemsKey(item.id), {
+			lockedClient.rPush(bidHistoryKey(itemId), serialized),
+			lockedClient.hSet(itemsKey(item.id), {
 				bids: item.bids + 1,
 				price: amount,
 				highestBidUserId: userId
 			}),
-			client.zAdd(itemsByPriceKey(), {
+			lockedClient.zAdd(itemsByPriceKey(), {
 				value: item.id,
 				score: amount
 			})
