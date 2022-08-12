@@ -29,7 +29,6 @@ export const withLock = async (key: string, cb: () => any) => {
 		await client.del(lockKey)
 		return result
 	}
-
 }
 
 const buildClientProxy = () => {};
