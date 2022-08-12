@@ -1,13 +1,15 @@
 import { client } from '$services/redis';
-import { itemsKey, itemsByViewsKey, itemsViewsKey } from '$services/keys';
 
 export const incrementView = async (itemId: string, userId: string) => {
-	const inserted = await client.pfAdd(itemsViewsKey(itemId), userId);
+	return client.incrementView(itemId, userId)
+}
 
-	if (inserted) {
-		return Promise.all([
-			client.hIncrBy(itemsKey(itemId), 'views', 1),
-			client.zIncrBy(itemsByViewsKey(), 1, itemId)
-		]);
-	}
-};
+// Keys need to access
+// 1) itemsViewsKey
+// 1) itemsKey -> items#vgbhluv
+// 1) itemsByViewsKey
+// EVALSHA ID 3
+
+// Arguments I need to accept
+// 1) itemId
+// 2) userId
