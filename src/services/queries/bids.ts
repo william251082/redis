@@ -1,12 +1,19 @@
 import type { CreateBidAttrs, Bid } from '$services/types';
 import {bidHistoryKey, itemsByPriceKey, itemsKey, userLikesKey} from '$services/keys';
-import { client } from '$services/redis';
+import {client, withLock} from '$services/redis';
 import { DateTime } from 'luxon';
 import {getItem} from "$services/queries/items";
 
 export const createBid = async (attrs: CreateBidAttrs) => {
+	const { itemId, userId, amount, createdAt } = attrs
+
+	return withLock(itemId, async () => {
+		// 1) Fetch the item
+		// 2) Do validation
+		// 3) Writing some data
+	})
 	return client.executeIsolated(async (isolatedClient) => {
-		const { itemId, userId, amount, createdAt } = attrs
+
 		await isolatedClient.watch(itemsKey(itemId))
 
 		const item = await getItem(itemId)
