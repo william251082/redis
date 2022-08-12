@@ -4,14 +4,21 @@ import {client, withLock} from '$services/redis';
 import { DateTime } from 'luxon';
 import {getItem} from "$services/queries/items";
 
+const pause = (duration: number) => {
+	return new Promise((resolve) => {
+		setTimeout(resolve, duration)
+	})
+}
+
 export const createBid = async (attrs: CreateBidAttrs) => {
 	const { itemId, userId, amount, createdAt } = attrs
 
-	return withLock(itemId, async () => {
+	return withLock(itemId, async (signal: any) => {
 		// 1) Fetch the item
 		// 2) Do validation
 		// 3) Writing some data
 		const item = await getItem(itemId)
+
 		if (!item) {
 			throw new Error('Item does not exist')
 		}
@@ -22,6 +29,10 @@ export const createBid = async (attrs: CreateBidAttrs) => {
 			throw new Error('item closed to bidding')
 		}
 		const serialized = serializeHistory(amount, createdAt.toMillis())
+
+		if (signal.expired) {
+			throw new Error('Lock expired, can\'t write anymore data')
+		}
 
 		return Promise.all([
 			client.rPush(bidHistoryKey(itemId), serialized),

@@ -1,7 +1,7 @@
 import {randomBytes} from "crypto";
 import {client} from "$services/redis/client";
 
-export const withLock = async (key: string, cb: () => any) => {
+export const withLock = async (key: string, cb: (signal: any) => any) => {
 	// Initialize a few variables to control retry behavior
 	const retryDelayMs = 100
 	let retries = 20
@@ -26,7 +26,11 @@ export const withLock = async (key: string, cb: () => any) => {
 		}
 		// IF the SET is successful, then run the callback
 		try {
-			return await cb()
+			const signal = { expired: false }
+			setTimeout (() => {
+				signal.expired = true
+			}, 2000)
+			return await cb(signal)
 		} finally {
 			// UNSET the locked set
 			await client.unlock(lockKey, token)
@@ -36,8 +40,4 @@ export const withLock = async (key: string, cb: () => any) => {
 
 const buildClientProxy = () => {};
 
-const pause = (duration: number) => {
-	return new Promise((resolve) => {
-		setTimeout(resolve, duration);
-	});
-};
+
