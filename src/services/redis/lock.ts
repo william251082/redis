@@ -16,7 +16,8 @@ export const withLock = async (key: string, cb: () => any) => {
 		retries--
 		// Try to do a SET NX operation
 		const acquired = await client.set(lockKey, token, {
-			NX: true
+			NX: true,
+			PX: 2000
 		})
 		if (!acquired) {
 			// ELSE brief pause (retryDelayMs) and then retry
@@ -24,10 +25,12 @@ export const withLock = async (key: string, cb: () => any) => {
 			continue
 		}
 		// IF the SET is successful, then run the callback
-		const result = await cb()
-		// UNSET the locked set
-		await client.del(lockKey)
-		return result
+		try {
+			return await cb()
+		} finally {
+			// UNSET the locked set
+			await client.del(lockKey)
+		}
 	}
 }
 
