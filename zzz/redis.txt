@@ -12,4 +12,14 @@ MGET item:1 item:2 item:3
 4. Create several items
 MSET item:4 item:5 item:nzg
 
+querying - TAG,
+searching - TEXT
+
+stemming - predicting terms
+https://snowballstem.org/demo.html
+
+fuzzy search
+%dar%
+%%daar%%
+
 
