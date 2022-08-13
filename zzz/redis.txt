@@ -28,4 +28,94 @@ FT.PROFILE idx:items SEARCH QUERY '%%chairs%%' LIMIT 0 0
 
 redis-cli FT.DROPINDEX idx:items
 
+STREAMS
+- cross between LIST and SORTED SET
+- used for communication between
+- most useful with 'consumer groups'
+- a lot of tiny details
+
+z-index
+<iframe src="https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:6843526362058362880" height="493" width="504"
+frameborder="0" allowfullscreen="" title="Embedded post"></iframe>
+
+reading and writing on STREAM:
+
+XADD fruits * color red name strawberry
+XADD fruits 1234567890 color red name strawberry
+
+➜  redis git:(main) ✗ redis-cli XADD fruits 12345678 color red name strawberry
+"12345678-0"
+
+➜  redis git:(main) ✗ redis-cli XREAD STREAMS fruits 0-0
+1) 1) "fruits"
+   2) 1) 1) "12345678-0"
+         2) 1) "color"
+            2) "red"
+            3) "name"
+            4) "strawberry"
+
+➜  redis git:(main) ✗ redis-cli XREAD STREAMS fruits 0-0
+1) 1) "fruits"
+   2) 1) 1) "12345678-0"
+         2) 1) "color"
+            2) "red"
+            3) "name"
+            4) "strawberry"
+      2) 1) "123456789-0"
+         2) 1) "color"
+            2) "yellow"
+            3) "name"
+            4) "banana"
+
+➜  redis git:(main) ✗ redis-cli XREAD COUNT 1 STREAMS fruits 0-0
+1) 1) "fruits"
+   2) 1) 1) "12345678-0"
+         2) 1) "color"
+            2) "red"
+            3) "name"
+            4) "strawberry"
+
+➜  redis git:(main) ✗ redis-cli XREAD BLOCK 3000 STREAMS fruits 0-0
+1) 1) "fruits"
+   2) 1) 1) "12345678-0"
+         2) 1) "color"
+            2) "red"
+            3) "name"
+            4) "strawberry"
+      2) 1) "123456789-0"
+         2) 1) "color"
+            2) "yellow"
+            3) "name"
+            4) "banana"
+
+➜  redis git:(main) ✗ redis-cli XREAD BLOCK 3000 STREAMS fruits 123456789-0-0
+
+NOW()
+➜  redis git:(main) ✗ redis-cli XREAD BLOCK 3000 STREAMS fruits $
+➜  redis git:(main) ✗ redis-cli XREAD BLOCK 3000 STREAMS fruits <recently-processed-id>
+
+XRANGE fruits 123456789-0 200000000-0
+1) 1) "123456789-0"
+   2) 1) "color"
+      2) "yellow"
+      3) "name"
+      4) "banana"
+
+
+DEL fruits
+
+Make stream and a group tied to it
+XGROUP CREATE fruits fruits-group $ MKSTREAM
+XGROUP CREATECONSUMER fruits fruits-group worker-1
+XGROUP CREATECONSUMER fruits fruits-group worker-2
+XINFO GROUPS fruits
+XINFO CONSUMERS fruits fruits-group
+
+- don't hard code the id, let redis do it with *
+XADD fruits 10-0 name banana color yellow
+XADD fruits 20-0 name apple color red
+XADD fruits 30-0 name orange color orange
+
+XREADGROUP GROUP fruits-group worker-1 COUNT 1 STREAMS fruits >
+
 
