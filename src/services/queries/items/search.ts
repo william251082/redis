@@ -15,10 +15,12 @@ export const searchItems = async (term: string, size: number = 5) => {
         return []
     }
 
+    const query = `(@name:(${cleaned}) => { $weight: 5.0 }) | (@description:(${cleaned}))`
+
     // Use the client to do an actual search
     const results = await client.ft.search(
         itemsIndexKey(),
-        cleaned, {
+        query, {
             LIMIT: {
                 from : 0,
                 size
@@ -27,5 +29,9 @@ export const searchItems = async (term: string, size: number = 5) => {
     )
 
     // Deserialize and return the search results
-    return results.documents.map(({id, value}) => deserialize(id, value as any))
+    return results.documents.map(({id, value}) => {
+        const itemId = typeof id === 'string' ? id.substring(id.length - 6) : ''
+
+        return deserialize(itemId, value as any)
+    })
 }
