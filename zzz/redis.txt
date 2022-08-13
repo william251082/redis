@@ -118,4 +118,4 @@ XADD fruits 30-0 name orange color orange
 
 XREADGROUP GROUP fruits-group worker-1 COUNT 1 STREAMS fruits >
 
-
+XAUTOCLAIM fruits fruits-group worker-2 10000 0-0
