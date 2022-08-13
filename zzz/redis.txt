@@ -26,4 +26,6 @@ FT.EXPLAINCLI idx:items '(@name:(chair)) | (@description:(chair))'
 FT.PROFILE idx:items SEARCH QUERY 'chairs' LIMIT 0 0
 FT.PROFILE idx:items SEARCH QUERY '%%chairs%%' LIMIT 0 0
 
+redis-cli FT.DROPINDEX idx:items
+
 
